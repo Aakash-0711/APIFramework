@@ -16,6 +16,7 @@ import io.restassured.specification.RequestSpecification;
 
 public class SetUp {
 	
+	// Method to be executed before each test
 	@Before
 	public void setUp() throws FileNotFoundException, IOException{ 
 		Properties prop = new Properties();
@@ -28,6 +29,7 @@ public class SetUp {
 	
 	@After
 	public void tearDown(Scenario sc){ 
+		// Print the name of the scenario
 		System.out.println(sc.getName());
 	}
 }
