@@ -20,6 +20,7 @@ public class MessageApiStepDefinitions extends BaseClass {
 
 	private File requestBody;
 	private int expectedStatusCode;
+	private String messageId;
 	
 
 	@Given("I want to send an message through the system")
@@ -39,10 +40,11 @@ public class MessageApiStepDefinitions extends BaseClass {
 
 	@Then("the system should confirm the message has been sent successfully as {int}")
 	public void the_system_should_confirm_the_message_has_been_sent_successfully_as(int statusCode) {
-		// Write code here that turns the phrase above into concrete actions
+		
 		expectedStatusCode = response.statusCode();
 		Assert.assertEquals(statusCode, expectedStatusCode);
 		response.prettyPrint();
+		messageId = response.jsonPath().getString("id");
 	}
 
 	@Then("I should receive a positive confirmation message")
@@ -55,5 +57,33 @@ public class MessageApiStepDefinitions extends BaseClass {
 					.statusCode(expectedStatusCode).body(key, equalTo(value)); // validate key-value pairs
 		});
 	}
+	
+	@Given("I have entered an email address in an incorrect format in {string}")
+	public void i_have_entered_an_email_address_in_an_incorrect_format_in(String filePath) {
+		requestBody = new File(filePath);
+	}
+
+	@Then("the system should reject the submission as {int}")
+	public void the_system_should_reject_the_submission_as(int statusCode) {
+		expectedStatusCode = response.statusCode();
+		Assert.assertEquals(statusCode, expectedStatusCode);
+		response.prettyPrint();
+	}
+	
+	@Given("I want to view the particular message created")
+	public void i_want_to_view_the_particular_message_created() {
+		response = request.contentType(ContentType.JSON).get("/"+ messageId);
+	}
+	
+	@Given("I want to update the existing message by changing the email address")
+	public void i_want_to_update_the_existing_message_by_changing_the_email_address() {
+		response = request.contentType(ContentType.JSON).put("/"+ messageId+"/read");
+	}
+	
+	@Given("I want to delete the existing date")
+	public void i_want_to_delete_the_existing_date() {
+		response = request.contentType(ContentType.JSON).delete("/"+ messageId);
+	}
+
 
 }
